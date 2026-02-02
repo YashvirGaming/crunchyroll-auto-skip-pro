@@ -1,60 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Crunchyroll Auto Skip PRO – Privacy Policy</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 0 20px;
-      line-height: 1.6;
-      color: #222;
-    }
-    h1 {
-      color: #f47521;
-    }
-    footer {
-      margin-top: 40px;
-      font-size: 14px;
-      color: #666;
-    }
-  </style>
-</head>
-<body>
+# Crunchyroll Auto Skip PRO
 
-  <h1>Privacy Policy</h1>
+Automatically skips anime openings, endings, and recaps on Crunchyroll.
 
-  <p>
-    <strong>Crunchyroll Auto Skip PRO</strong> does not collect, store, transmit,
-    or sell any personal data.
-  </p>
+Crunchyroll Auto Skip PRO enhances your anime watching experience by removing interruptions caused by intros, recaps, and outros — all automatically.
 
-  <p>
-    The extension runs entirely within the user’s browser and only interacts
-    with Crunchyroll pages to detect and control video playback.
-  </p>
+---
 
-  <p>
-    Public APIs such as <strong>AniSkip</strong> and <strong>AniList</strong> are used
-    solely to retrieve anime skip timestamps and metadata. No personally
-    identifiable information, browsing history, or user activity is collected
-    or shared.
-  </p>
+## ✨ Features
 
-  <p>
-    All settings (such as enabling or disabling auto skip) are stored locally
-    using Chrome’s storage API.
-  </p>
+- ⏭️ Auto-skip anime **Openings (OP)**
+- 🔁 Auto-skip **Recaps**
+- ⏹️ Auto-skip **Endings (ED)**
+- ⚡ Fast and accurate skipping using AniSkip data
+- 🎛️ Simple ON / OFF toggle
+- 🔔 On-screen indicator when a section is skipped
+- 🧠 Smart caching for faster episode loading
+- 🔒 No ads, no tracking, no data collection
 
-  <footer>
-    <p>
-      Made by Yashvir Gaming<br>
-      Contact: <a href="mailto:yashvirgaming@gmail.com">yashvirgaming@gmail.com</a>
-    </p>
-  </footer>
+---
 
-</body>
-</html>
+## 🔐 Privacy
+
+Crunchyroll Auto Skip PRO does **not** collect, store, transmit, or sell any personal data.
+
+The extension runs entirely in the user’s browser and only interacts with Crunchyroll pages to control video playback.  
+Public APIs (AniSkip and AniList) are used solely to retrieve skip timestamps and anime metadata.
+
+---
+
+## ⚠️ Disclaimer
+
+This extension is **not affiliated with or endorsed by Crunchyroll**.  
+Crunchyroll is a registered trademark of its respective owners.
+
+---
+
+## 🛠️ Installation (Developer Mode)
+
+1. Download or clone this repository
+2. Open `chrome://extensions`
+3. Enable **Developer mode**
+4. Click **Load unpacked**
+5. Select the extension folder
+
+---
+
+## 📬 Contact
+
+Made by **Yashvir Gaming**  
+📧 Email: dmyashvirgaming@yahoo.com
