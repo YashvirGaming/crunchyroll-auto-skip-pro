@@ -1,99 +1,141 @@
-console.log("Crunchyroll Auto Skip PRO loaded");
+(() => {
+  let lastVideo = null;
+  let skipSegments = null;
 
-let skipSegments = null;
-let lastVideo = null;
+  function getVideo() {
+    return document.querySelector("video");
+  }
 
-function getVideo() {
-  return document.querySelector("video");
-}
+  function showIndicator(text) {
+    if (document.getElementById("cr-auto-skip-toast")) return;
 
-function getTitle() {
-  return document.title
-    .replace("- Crunchyroll", "")
-    .replace(/Episode\s+\d+.*/i, "")
-    .trim();
-}
+    const div = document.createElement("div");
+    div.id = "cr-auto-skip-toast";
+    div.textContent = text;
 
-function getEpisodeNumber() {
-  const m = document.title.match(/Episode\s+(\d+)/i);
-  return m ? Number(m[1]) : null;
-}
+    Object.assign(div.style, {
+      position: "fixed",
+      bottom: "80px",
+      right: "20px",
+      background: "rgba(0,0,0,0.8)",
+      color: "#fff",
+      padding: "8px 12px",
+      borderRadius: "6px",
+      fontSize: "13px",
+      zIndex: 9999
+    });
 
-function getAniListId(title) {
-  return new Promise(resolve => {
-    chrome.runtime.sendMessage(
-      { type: "GET_ANILIST_ID", title },
-      res => resolve(res?.id)
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 2000);
+  }
+
+
+  function clickNativeSkipIntro() {
+    const skipBtn = document.querySelector(
+      'div[role="button"][aria-label="Skip Intro"]'
     );
-  });
-}
 
-async function loadSkipData() {
-  const title = getTitle();
-  const episode = getEpisodeNumber();
-  if (!title || !episode) return;
-
-  const id = await getAniListId(title);
-  if (!id) return;
-
-  const res = await fetch(
-    `https://api.aniskip.com/v2/skip-times/${id}/${episode}?types[]=op&types[]=ed&types[]=recap`
-  );
-
-  const json = await res.json();
-  if (json?.found) skipSegments = json.results;
-}
-
-function showIndicator(text) {
-  const el = document.createElement("div");
-  el.textContent = text;
-  el.style = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #f47521;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    z-index: 9999;
-    font-size: 13px;
-  `;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2000);
-}
-
-function applySkip(video) {
-  if (!skipSegments) return;
-
-  skipSegments.forEach(s => {
-    const { startTime, endTime } = s.interval;
-
-    if (
-      video.currentTime >= startTime &&
-      video.currentTime <= endTime
-    ) {
-      video.currentTime = endTime + 0.15;
-
-      if (s.skipType === "op") showIndicator("Opening skipped ✓");
-      if (s.skipType === "ed") showIndicator("Ending skipped ✓");
-      if (s.skipType === "recap") showIndicator("Recap skipped ✓");
-    }
-  });
-}
-
-setInterval(() => {
-  chrome.storage.sync.get("enabled", async res => {
-    if (res.enabled === false) return;
-
-    const video = getVideo();
-    if (!video) return;
-
-    if (video !== lastVideo) {
-      lastVideo = video;
-      skipSegments = null;
-      await loadSkipData();
+    if (skipBtn && skipBtn.offsetParent !== null) {
+      skipBtn.click();
+      showIndicator("Intro skipped ✓");
+      return true;
     }
 
-    applySkip(video);
-  });
-}, 500);
+    return false;
+  }
+
+
+  async function getAniListId(title) {
+    try {
+      const res = await fetch("https://graphql.anilist.co", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
+            query ($search: String) {
+              Media(search: $search, type: ANIME) {
+                id
+              }
+            }
+          `,
+          variables: { search: title }
+        })
+      });
+
+      const json = await res.json();
+      return json?.data?.Media?.id || null;
+    } catch {
+      return null;
+    }
+  }
+
+
+  async function loadSkipData() {
+    try {
+      const titleEl =
+        document.querySelector('[data-testid="hero-title"]') ||
+        document.querySelector("h1");
+
+      if (!titleEl) return null;
+
+      const title = titleEl.textContent.trim();
+
+      const epMatch = location.pathname.match(/\/watch\/[^/]+\/[^/]+/);
+      if (!epMatch) return null;
+
+      const episodeNumber = 1;
+
+      const anilistId = await getAniListId(title);
+      if (!anilistId) return null;
+
+      const res = await fetch(
+        `https://api.aniskip.com/v2/skip-times/${anilistId}/${episodeNumber}?types[]=op&types[]=recap`
+      );
+
+      const json = await res.json();
+
+      if (!json?.results?.length) return null;
+
+      return json.results;
+    } catch {
+      return null;
+    }
+  }
+
+
+  function applySkip(video) {
+    if (!skipSegments) return;
+
+    for (const seg of skipSegments) {
+      if (
+        video.currentTime >= seg.startTime &&
+        video.currentTime < seg.endTime
+      ) {
+        video.currentTime = seg.endTime;
+        showIndicator("Intro skipped ✓");
+        break;
+      }
+    }
+  }
+
+
+  setInterval(async () => {
+    chrome.storage.sync.get({ enabled: true }, async res => {
+      if (!res.enabled) return;
+
+      const video = getVideo();
+      if (!video) return;
+
+      if (video !== lastVideo) {
+        lastVideo = video;
+        skipSegments = await loadSkipData();
+      }
+
+      if (skipSegments) {
+        applySkip(video);
+      } else {
+        clickNativeSkipIntro();
+      }
+    });
+  }, 500);
+})();
