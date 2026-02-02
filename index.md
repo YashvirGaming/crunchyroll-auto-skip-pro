@@ -7,4 +7,4 @@ The extension runs entirely in the user’s browser and only interacts with Crun
 Public APIs (AniSkip and AniList) are used only to retrieve anime skip timestamps and metadata. No user-identifiable information is collected or shared.
 
 Contact:
-yashvirgaming@gmail.com
+dmyashvirgaming@yahoo.com
