@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Crunchyroll Auto Skip PRO</title>
+
+  <style>
+    body {
+      width: 240px;
+      margin: 0;
+      padding: 14px;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #222;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .logo {
+      width: 32px;
+      height: 32px;
+      margin-right: 10px;
+    }
+
+    .title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #f47521;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      color: #777;
+    }
+
+    .card {
+      background: #f7f7f7;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .switch {
+      position: relative;
+      width: 42px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #ccc;
+      border-radius: 22px;
+      transition: 0.2s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    input:checked + .slider {
+      background-color: #f47521;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    .footer {
+      font-size: 11px;
+      text-align: center;
+      color: #888;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <!-- Optional icon -->
+    <!-- <img src="icon.png" class="logo"> -->
+    <div>
+      <div class="title">Auto Skip PRO</div>
+      <div class="subtitle">Crunchyroll</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-row">
+      <span>Enable Auto Skip</span>
+
+      <label class="switch">
+        <input type="checkbox" id="toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="footer">
+    Made by Yashvir Gaming
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
