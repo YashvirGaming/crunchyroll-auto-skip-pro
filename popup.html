@@ -7,113 +7,180 @@
     <style>
       :root {
         font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-        color-scheme: light dark;
+        color-scheme: dark;
       }
-      .hint {
-        display: block;
-        font-size: 12px;
-        color: rgba(0, 0, 0, 0.65);
-        margin-left: 24px;
-        margin-top: 6px;
-      }
+
+      /* ===== Body ===== */
       body {
         margin: 0;
-        padding: 12px;
-        width: 320px;
-        background: #fff;
-        color: #111;
+        padding: 14px;
+        width: 340px;
+        background: #0f1117;
+        color: #e6e6e6;
+        backdrop-filter: blur(5px);
       }
+
       h1 {
         font-size: 18px;
-        margin: 0 0 8px;
+        margin: 0 0 16px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-align: center;
       }
+
+      /* ===== Glassy Card ===== */
+      .card {
+        background: rgba(24, 27, 36, 0.85);
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+      }
+
+      /* ===== Animated Toggle Button ===== */
       .toggle {
         width: 100%;
         border: none;
-        border-radius: 6px;
-        padding: 10px 12px;
+        border-radius: 12px;
+        padding: 12px 16px;
         font-size: 14px;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
         color: #fff;
-        background: #6b6b6b;
+        transition: all 0.25s ease;
+        background: linear-gradient(135deg, #3a3f4b, #2a2f3a);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
       }
+
+      .toggle:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
+      }
+
+      .toggle:active {
+        transform: scale(0.97);
+      }
+
       .toggle.enable {
-        background: #22a852;
+        background: linear-gradient(135deg, #1db954, #158f43);
       }
+
       .toggle.disable {
-        background: #c53939;
+        background: linear-gradient(135deg, #e53935, #b71c1c);
       }
-      fieldset {
-        border: none;
-        padding: 0;
-        margin: 12px 0 0;
-      }
-      fieldset:disabled {
-        opacity: 0.55;
-      }
+
+      /* ===== Checkbox Styling ===== */
       label {
-        display: block;
-        margin: 6px 0;
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
         font-size: 14px;
+        cursor: pointer;
       }
+
+      input[type='checkbox'] {
+        accent-color: #1db954;
+        transform: scale(1.2);
+        margin-right: 8px;
+      }
+
+      /* ===== Number Input ===== */
       input[type='number'] {
         width: 90px;
-        margin-left: 8px;
-        background: #fff;
-        color: inherit;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        border-radius: 4px;
-        padding: 2px 4px;
+        margin-left: auto;
+        background: rgba(28, 33, 43, 0.8);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        padding: 5px 8px;
+        transition: border 0.2s ease, box-shadow 0.2s ease;
       }
-      @media (prefers-color-scheme: dark) {
-        body {
-          background: #111;
-          color: #f1f1f1;
-        }
-        .toggle {
-          background: #3d3d3d;
-        }
-        .toggle.enable {
-          background: #1b8a45;
-        }
-        .toggle.disable {
-          background: #a82d2d;
-        }
-        fieldset:disabled {
-          opacity: 0.45;
-        }
-        input[type='number'] {
-          background: #1e1e1e;
-          border-color: rgba(255, 255, 255, 0.2);
-          color: #f1f1f1;
-        }
-        .hint {
-          color: rgba(255, 255, 255, 0.75);
-          font-size: 12px;
-        }
+
+      input[type='number']:focus {
+        outline: none;
+        border-color: #1db954;
+        box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.3);
+      }
+
+      /* ===== Fieldset Card ===== */
+      fieldset {
+        border: none;
+        padding: 12px;
+        margin: 0;
+      }
+
+      fieldset > label {
+        margin: 6px 0;
+      }
+
+      /* ===== Hint Text ===== */
+      .hint {
+        display: block;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.65);
+        margin-left: 26px;
+        margin-top: 2px;
+      }
+
+      /* ===== Credit ===== */
+      .credit {
+        margin-top: 16px;
+        font-size: 12px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .credit a {
+        color: #1db954;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .credit a:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
   <body>
     <h1>Crunchyroll AutoSkip PRO v1.1</h1>
-    <button id="toggleEnabled" class="toggle" type="button">Disable auto-skip</button>
-    <label>
-      <input type="checkbox" id="pipEnabled" /> Show Picture-in-Picture button
+
+    <div class="card">
+      <button id="toggleEnabled" class="toggle" type="button">Disable auto-skip</button>
+    </div>
+
+    <div class="card">
+      <label>
+        <input type="checkbox" id="pipEnabled" /> Show Picture-in-Picture button
+      </label>
       <span class="hint">PIP Shortcut: Alt+Shift+S</span>
-    </label>
-    <fieldset>
-      <label><input type="checkbox" id="skipIntro" /> Skip Intro</label>
-      <label><input type="checkbox" id="skipEnding" /> Skip Credits</label>
-      <label><input type="checkbox" id="debug" /> Enable debug logging</label>
-      <label>Click delay (ms): <input type="number" id="clickDelayMs" min="0" step="50" /></label>
-    </fieldset>
-	<div class="credit">
+    </div>
+
+    <div class="card">
+      <fieldset>
+        <label><input type="checkbox" id="skipIntro" /> Skip Intro</label>
+        <label><input type="checkbox" id="skipEnding" /> Skip Credits</label>
+        <label><input type="checkbox" id="debug" /> Enable debug logging</label>
+        <label>
+          Click delay (ms):
+          <input type="number" id="clickDelayMs" min="0" step="50" />
+        </label>
+      </fieldset>
+    </div>
+
+    <div class="credit">
       ⚡ Coded by 
       <a href="https://www.facebook.com/yashvirgaming.info" target="_blank" rel="noopener">
         Yashvir Gaming
       </a>
     </div>
+
     <script src="popup.js"></script>
   </body>
 </html>
