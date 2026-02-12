@@ -1,64 +1,132 @@
-const mainToggle = document.getElementById("mainToggle");
-const pip = document.getElementById("pip");
-const skipIntro = document.getElementById("skipIntro");
-const skipCredits = document.getElementById("skipCredits");
-const debug = document.getElementById("debug");
+const defaults = { enabled: true, skipIntro: true, skipEnding: true, clickDelayMs: 200, debug: false, pipEnabled: true };
+let currentSettings = { ...defaults };
 
-// Load initial state
-chrome.storage.sync.get(
-  { enabled: true, pip: true, skipIntro: true, skipCredits: true, debug: false },
-  (settings) => {
-    updateMainButton(settings.enabled);
-    pip.checked = settings.pip;
-    skipIntro.checked = settings.skipIntro;
-    skipCredits.checked = settings.skipCredits;
-    debug.checked = settings.debug;
-  }
-);
-
-function updateMainButton(enabled) {
-  mainToggle.textContent = enabled ? "Disable Auto-Skip" : "Enable Auto-Skip";
-  mainToggle.style.backgroundColor = enabled ? "green" : "red";
+function $(id) {
+  return document.getElementById(id);
 }
 
-// Main toggle click
-mainToggle.addEventListener("click", () => {
-  chrome.storage.sync.get(["enabled"], (res) => {
-    const newState = !res.enabled;
+function getStorage() {
+  if (typeof chrome === 'undefined' || !chrome.storage) return null;
+  return chrome.storage.sync || chrome.storage.local || null;
+}
 
-    // Update storage
-    chrome.storage.sync.set({
-      enabled: newState,
-      pip: newState,
-      skipIntro: newState,
-      skipCredits: newState
+function parseDelay(value) {
+  const parsed = parseInt(value, 10);
+  if (Number.isFinite(parsed) && parsed >= 0) return parsed;
+  return defaults.clickDelayMs;
+}
+
+function applySettings(values) {
+  currentSettings = { ...defaults, ...values };
+  $('skipIntro').checked = currentSettings.skipIntro;
+  $('skipEnding').checked = currentSettings.skipEnding;
+  $('debug').checked = currentSettings.debug;
+  $('clickDelayMs').value = currentSettings.clickDelayMs;
+  const pipToggle = $('pipEnabled');
+  if (pipToggle) pipToggle.checked = currentSettings.pipEnabled;
+
+  const toggleButton = $('toggleEnabled');
+  if (toggleButton) {
+    const enabled = currentSettings.enabled;
+    const hint = ' (Alt+Shift+S / \u2325\u21E7S)'; // ⌥⇧S for macOS
+    toggleButton.textContent = enabled ? `Disable auto-skip${hint}` : `Enable auto-skip${hint}`;
+    toggleButton.classList.toggle('disable', enabled);
+    toggleButton.classList.toggle('enable', !enabled);
+  }
+
+  const fieldset = document.querySelector('fieldset');
+  if (fieldset) {
+    fieldset.disabled = !currentSettings.enabled;
+  }
+}
+
+function loadSettings() {
+  const storage = getStorage();
+  if (!storage) {
+    applySettings(defaults);
+    return;
+  }
+
+  storage.get(defaults, (res) => {
+    if (chrome.runtime && chrome.runtime.lastError) {
+      console.warn('Crunchyroll-AutoSkip PRO: using defaults in popup due to storage error', chrome.runtime.lastError);
+      applySettings(defaults);
+      return;
+    }
+    applySettings(res || defaults);
+  });
+}
+
+function persist(partialSettings) {
+  currentSettings = { ...currentSettings, ...partialSettings };
+  const storage = getStorage();
+  if (!storage) {
+    applySettings(currentSettings);
+    return;
+  }
+  storage.set(partialSettings, () => {
+    if (chrome.runtime && chrome.runtime.lastError) {
+      console.warn('Crunchyroll-AutoSkip PRO: failed to persist popup settings', chrome.runtime.lastError);
+    }
+  });
+}
+
+function bindEvents() {
+  const toggleButton = $('toggleEnabled');
+  if (toggleButton) {
+    toggleButton.addEventListener('click', () => {
+      persist({ enabled: !currentSettings.enabled });
     });
+  }
 
-    // Update UI
-    updateMainButton(newState);
-    pip.checked = newState;
-    skipIntro.checked = newState;
-    skipCredits.checked = newState;
-
-    // Notify content script
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (!tabs[0]) return;
-      chrome.tabs.sendMessage(tabs[0].id, { action: "updateSettings" });
+  ['skipIntro', 'skipEnding', 'debug'].forEach((id) => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('change', () => {
+      persist({ [id]: el.checked });
     });
   });
-});
 
-// Individual toggles
-[pip, skipIntro, skipCredits, debug].forEach((el) => {
-  el.addEventListener("change", (e) => {
-    const key = el.id;
-    const value = e.target.checked;
-    chrome.storage.sync.set({ [key]: value });
-
-    // Notify content script
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (!tabs[0]) return;
-      chrome.tabs.sendMessage(tabs[0].id, { action: "updateSettings" });
+  const pipToggle = $('pipEnabled');
+  if (pipToggle) {
+    pipToggle.addEventListener('change', () => {
+      persist({ pipEnabled: pipToggle.checked });
     });
+  }
+
+  const delayInput = $('clickDelayMs');
+  if (delayInput) {
+    ['change', 'blur'].forEach((evt) => {
+      delayInput.addEventListener(evt, () => {
+        const value = parseDelay(delayInput.value);
+        delayInput.value = value;
+        persist({ clickDelayMs: value });
+      });
+    });
+  }
+
+}
+
+function observeStorage() {
+  if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.onChanged) return;
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== 'sync' && areaName !== 'local') return;
+    const delta = {};
+    let changed = false;
+    Object.keys(changes).forEach((key) => {
+      if (key in defaults) {
+        delta[key] = changes[key].newValue;
+        changed = true;
+      }
+    });
+    if (changed) {
+      applySettings({ ...currentSettings, ...delta });
+    }
   });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadSettings();
+  bindEvents();
+  observeStorage();
 });

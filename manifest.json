@@ -1,22 +1,34 @@
 {
-  "manifest_version": 3,
-  "name": "Crunchyroll Auto Skip PRO",
-  "version": "1.1",
-  "description": "Automatically Skips Anime Intro's and Outro's on Crunchyroll. Made by Yashvir Gaming.",
-  "permissions": ["storage", "tabs", "scripting"],
-  "host_permissions": ["*://*.crunchyroll.com/*"],
-  "action": {
-    "default_title": "Crunchyroll AutoSkip Pro",
-	"default_popup": "popup.html"
-  },
-  "content_scripts": [
-    {
-      "matches": ["*://*.crunchyroll.com/*"],
-      "js": ["settings.js", "skipEngine.js", "feedback.js", "content.js"],
+   "action": {
+      "default_icon": {
+         "128": "icons/icon128.png",
+         "16": "icons/icon16.png",
+         "32": "icons/icon32.png",
+         "48": "icons/icon48.png"
+      },
+      "default_popup": "popup.html",
+      "default_title": "Crunchyroll AutoSkip Pro"
+   },
+   "content_scripts": [ {
+      "all_frames": true,
+      "js": [ "settings.js", "skipEngine.js", "feedback.js", "keyboardShortcut.js", "pipButton.js", "content.js" ],
+      "matches": [ "*://*.crunchyroll.com/*" ],
       "run_at": "document_idle"
-    }
-  ],
-  "icons": {
-    "128": "icons/icon128.png"
-  }
+   } ],
+   "description": "Automatically Skips Anime Intro's and Outro's on Crunchyroll. Made by Yashvir Gaming.",
+   "host_permissions": [ "*://*.crunchyroll.com/*" ],
+   "icons": {
+      "128": "icons/icon128.png",
+      "16": "icons/icon16.png",
+      "256": "icons/icon256.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "512": "icons/icon512.png",
+      "64": "icons/icon64.png",
+      "96": "icons/icon96.png"
+   },
+   "manifest_version": 3,
+   "name": "Crunchyroll AutoSkip PRO",
+   "permissions": [ "storage" ],
+   "version": "1.1"
 }

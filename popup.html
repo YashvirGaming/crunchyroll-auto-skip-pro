@@ -1,61 +1,119 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="popup.css">
-</head>
-<body>
-  <div class="container">
-    <h1>Crunchyroll AutoSkip Pro</h1>
-
-    <button id="mainToggle" class="main-btn">
-      Disable Auto-Skip
-    </button>
-
-    <div class="section">
-      <label class="switch">
-        <input type="checkbox" id="pip">
-        <span class="slider"></span>
-      </label>
-      <span>Show Picture-in-Picture</span>
-    </div>
-
-    <div class="section">
-      <label class="switch">
-        <input type="checkbox" id="skipIntro">
-        <span class="slider"></span>
-      </label>
-      <span>Skip Intro</span>
-    </div>
-
-    <div class="section">
-      <label class="switch">
-        <input type="checkbox" id="skipCredits">
-        <span class="slider"></span>
-      </label>
-      <span>Skip Credits</span>
-    </div>
-
-    <div class="section">
-      <label class="switch">
-        <input type="checkbox" id="debug">
-        <span class="slider"></span>
-      </label>
-      <span>Debug Mode</span>
-    </div>
-
-    <div class="credit">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Crunchyroll AutoSkip PRO</title>
+    <style>
+      :root {
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+        color-scheme: light dark;
+      }
+      .hint {
+        display: block;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.65);
+        margin-left: 24px;
+        margin-top: 6px;
+      }
+      body {
+        margin: 0;
+        padding: 12px;
+        width: 320px;
+        background: #fff;
+        color: #111;
+      }
+      h1 {
+        font-size: 18px;
+        margin: 0 0 8px;
+      }
+      .toggle {
+        width: 100%;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        color: #fff;
+        background: #6b6b6b;
+      }
+      .toggle.enable {
+        background: #22a852;
+      }
+      .toggle.disable {
+        background: #c53939;
+      }
+      fieldset {
+        border: none;
+        padding: 0;
+        margin: 12px 0 0;
+      }
+      fieldset:disabled {
+        opacity: 0.55;
+      }
+      label {
+        display: block;
+        margin: 6px 0;
+        font-size: 14px;
+      }
+      input[type='number'] {
+        width: 90px;
+        margin-left: 8px;
+        background: #fff;
+        color: inherit;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        padding: 2px 4px;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #111;
+          color: #f1f1f1;
+        }
+        .toggle {
+          background: #3d3d3d;
+        }
+        .toggle.enable {
+          background: #1b8a45;
+        }
+        .toggle.disable {
+          background: #a82d2d;
+        }
+        fieldset:disabled {
+          opacity: 0.45;
+        }
+        input[type='number'] {
+          background: #1e1e1e;
+          border-color: rgba(255, 255, 255, 0.2);
+          color: #f1f1f1;
+        }
+        .hint {
+          color: rgba(255, 255, 255, 0.75);
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Crunchyroll AutoSkip PRO v1.1</h1>
+    <button id="toggleEnabled" class="toggle" type="button">Disable auto-skip</button>
+    <label>
+      <input type="checkbox" id="pipEnabled" /> Show Picture-in-Picture button
+      <span class="hint">PIP Shortcut: Alt+Shift+S</span>
+    </label>
+    <fieldset>
+      <label><input type="checkbox" id="skipIntro" /> Skip Intro</label>
+      <label><input type="checkbox" id="skipEnding" /> Skip Credits</label>
+      <label><input type="checkbox" id="debug" /> Enable debug logging</label>
+      <label>Click delay (ms): <input type="number" id="clickDelayMs" min="0" step="50" /></label>
+    </fieldset>
+	<div class="credit">
       ⚡ Coded by 
       <a href="https://www.facebook.com/yashvirgaming.info" target="_blank" rel="noopener">
         Yashvir Gaming
       </a>
     </div>
-
-    <div class="footer">
-      v1.1 • Alt+Shift+S
-    </div>
-  </div>
-
-  <script src="popup.js"></script>
-</body>
+    <script src="popup.js"></script>
+  </body>
 </html>
