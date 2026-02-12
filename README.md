@@ -70,7 +70,7 @@ Crunchyroll is a registered trademark of its respective owners.
 <h2>📬 Contact</h2>
 <p>
 Made by <strong>Yashvir Gaming</strong><br>
-📧 Email: dmyashvirgaming@yahoo.com
+📧 Email: yashvirgamingext@aol.com
 </p>
 
 <h2>🔗 Credits</h2>
