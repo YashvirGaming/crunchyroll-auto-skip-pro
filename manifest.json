@@ -1,27 +1,22 @@
 {
   "manifest_version": 3,
   "name": "Crunchyroll Auto Skip PRO",
-  "version": "1.0",
-  "description": "Automatically skips anime intros and endings on Crunchyroll using AniSkip data. Made by Yashvir Gaming.",
+  "version": "1.1",
+  "description": "Automatically Skips Anime Intro's and Outro's on Crunchyroll. Made by Yashvir Gaming.",
   "permissions": ["storage"],
-  "host_permissions": [
-    "https://www.crunchyroll.com/*",
-    "https://api.aniskip.com/*",
-    "https://graphql.anilist.co/*"
-  ],
-  "background": {
-    "service_worker": "background.js"
+  "host_permissions": ["*://*.crunchyroll.com/*"],
+  "action": {
+    "default_title": "Crunchyroll AutoSkip Pro",
+	"default_popup": "popup.html"
   },
   "content_scripts": [
     {
-      "matches": ["https://www.crunchyroll.com/*"],
-      "js": ["content.js"]
+      "matches": ["*://*.crunchyroll.com/*"],
+      "js": ["settings.js", "skipEngine.js", "feedback.js", "content.js"],
+      "run_at": "document_idle"
     }
   ],
-  "action": {
-    "default_popup": "popup.html"
-  },
   "icons": {
-    "128": "icon.png"
+    "128": "icons/icon128.png"
   }
 }
