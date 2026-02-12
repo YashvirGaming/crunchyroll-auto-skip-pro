@@ -11,7 +11,7 @@
    },
    "content_scripts": [ {
       "all_frames": true,
-      "js": [ "settings.js", "skipEngine.js", "feedback.js", "keyboardShortcut.js", "pipButton.js", "content.js" ],
+      "js": [ "settingsManager.js", "skipDetection.js", "visualFeedback.js", "keyboardShortcut.js", "pipButton.js", "contentScript.js" ],
       "matches": [ "*://*.crunchyroll.com/*" ],
       "run_at": "document_idle"
    } ],
