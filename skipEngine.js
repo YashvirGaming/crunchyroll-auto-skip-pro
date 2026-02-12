@@ -1,13 +1,13 @@
 let observer = null;
 
 function logDebug(...args) {
-  if (window.__cr_settings?.getSettings()?.debug) {
+  if (window.__cr_settings?.getSettings()?.debug || window.debugEnabled) {
     console.debug("Crunchyroll AutoSkip Pro:", ...args);
   }
 }
 
 function findAndClickSkip() {
-  if (!window.__cr_settings?.getSettings()?.enabled) return;
+  if (!window.autoSkipEnabled) return;
 
   const candidates = document.querySelectorAll("button, div[role='button']");
 
@@ -15,14 +15,16 @@ function findAndClickSkip() {
     const text = (el.innerText || el.textContent || "").toLowerCase();
     const aria = (el.getAttribute("aria-label") || "").toLowerCase();
 
-    if (
-      text.includes("skip intro") ||
-      text.includes("skip credits") ||
-      aria.includes("skip")
-    ) {
-      logDebug("Clicking skip button:", el);
+    if (window.skipIntroEnabled && (text.includes("skip intro") || aria.includes("skip intro"))) {
+      logDebug("Clicking Skip Intro:", el);
       el.click();
-      window.__cr_feedback?.showMessage("Skipped ⏭");
+      window.__cr_feedback?.showMessage("Skipped Intro ⏭");
+    }
+
+    if (window.skipCreditsEnabled && (text.includes("skip credits") || aria.includes("skip credits"))) {
+      logDebug("Clicking Skip Credits:", el);
+      el.click();
+      window.__cr_feedback?.showMessage("Skipped Credits ⏭");
     }
   }
 }
@@ -42,6 +44,16 @@ function startObserver() {
   logDebug("MutationObserver started");
 }
 
+function stopObserver() {
+  if (observer) {
+    observer.disconnect();
+    observer = null;
+    logDebug("MutationObserver stopped");
+  }
+}
+
 window.__cr_skipEngine = {
-  startObserver
+  startObserver,
+  stopObserver,
+  findAndClickSkip
 };

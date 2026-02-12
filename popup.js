@@ -1,4 +1,9 @@
 const mainToggle = document.getElementById("mainToggle");
+const pip = document.getElementById("pip");
+const skipIntro = document.getElementById("skipIntro");
+const skipCredits = document.getElementById("skipCredits");
+const debug = document.getElementById("debug");
+
 
 chrome.storage.sync.get(
   {
@@ -11,29 +16,70 @@ chrome.storage.sync.get(
   (settings) => {
     updateMainButton(settings.enabled);
 
-    document.getElementById("pip").checked = settings.pip;
-    document.getElementById("skipIntro").checked = settings.skipIntro;
-    document.getElementById("skipCredits").checked = settings.skipCredits;
-    document.getElementById("debug").checked = settings.debug;
+    pip.checked = settings.pip;
+    skipIntro.checked = settings.skipIntro;
+    skipCredits.checked = settings.skipCredits;
+    debug.checked = settings.debug;
   }
 );
 
 function updateMainButton(enabled) {
-  mainToggle.textContent = enabled
-    ? "Disable Auto-Skip"
-    : "Enable Auto-Skip";
+  mainToggle.textContent = enabled ? "Disable Auto-Skip" : "Enable Auto-Skip";
+  mainToggle.style.backgroundColor = enabled ? "green" : "red";
 }
 
 mainToggle.addEventListener("click", () => {
-  chrome.storage.sync.get("enabled", (res) => {
+  chrome.storage.sync.get(["enabled"], (res) => {
     const newState = !res.enabled;
-    chrome.storage.sync.set({ enabled: newState });
+
+    chrome.storage.sync.set({
+      enabled: newState,
+      pip: newState,
+      skipIntro: newState,
+      skipCredits: newState
+    });
+
     updateMainButton(newState);
+    pip.checked = newState;
+    skipIntro.checked = newState;
+    skipCredits.checked = newState;
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      tabs.forEach((tab) => {
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: (enabled) => {
+            window.autoSkipEnabled = enabled;
+            window.pipEnabled = enabled;
+            window.skipIntroEnabled = enabled;
+            window.skipCreditsEnabled = enabled;
+
+            if (window.toggleSkipFeatures) window.toggleSkipFeatures(enabled);
+          },
+          args: [newState],
+        });
+      });
+    });
   });
 });
 
-["pip", "skipIntro", "skipCredits", "debug"].forEach(id => {
-  document.getElementById(id).addEventListener("change", (e) => {
-    chrome.storage.sync.set({ [id]: e.target.checked });
+[pip, skipIntro, skipCredits, debug].forEach((el) => {
+  el.addEventListener("change", (e) => {
+    const key = el.id;
+    const value = e.target.checked;
+
+    chrome.storage.sync.set({ [key]: value });
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      tabs.forEach((tab) => {
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: (key, value) => {
+            window[key + "Enabled"] = value;
+          },
+          args: [key, value],
+        });
+      });
+    });
   });
 });
