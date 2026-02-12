@@ -11,7 +11,6 @@ Crunchyroll Auto Skip PRO enhances your anime watching experience by removing in
 - ⏭️ Auto-skip anime **Openings (OP)**
 - 🔁 Auto-skip **Recaps**
 - ⏹️ Auto-skip **Endings (ED)**
-- ⚡ Fast and accurate skipping using AniSkip data
 - 🎛️ Simple ON / OFF toggle
 - 🔔 On-screen indicator when a section is skipped
 - 🧠 Smart caching for faster episode loading
@@ -24,7 +23,6 @@ Crunchyroll Auto Skip PRO enhances your anime watching experience by removing in
 Crunchyroll Auto Skip PRO does **not** collect, store, transmit, or sell any personal data.
 
 The extension runs entirely in the user’s browser and only interacts with Crunchyroll pages to control video playback.  
-Public APIs (AniSkip and AniList) are used solely to retrieve skip timestamps and anime metadata.
 
 ---
 
