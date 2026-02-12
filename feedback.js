@@ -21,6 +21,4 @@ function showMessage(text) {
   }, 1500);
 }
 
-window.__cr_feedback = {
-  showMessage
-};
+window.__cr_feedback = { showMessage };

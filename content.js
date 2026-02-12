@@ -1,69 +1,102 @@
-function init() {
-  window.__cr_settings.loadSettings();
-  window.__cr_skipEngine.startObserver();
+function logDebug(...args) {
+  const settings = window.__cr_settings?.getSettings();
+  if (!settings?.debug) return;
+  console.debug('Crunchyroll AutoSkip Pro:', ...args);
+}
 
-  window.autoSkipEnabled = true;
-  window.pipEnabled = true;
-  window.skipIntroEnabled = true;
-  window.skipCreditsEnabled = true;
+function initializeExtension() {
+  logDebug('Content script initializing...');
 
-  chrome.storage.sync.get(
-    { enabled: true, pip: true, skipIntro: true, skipCredits: true },
-    (settings) => {
-      window.autoSkipEnabled = settings.enabled;
-      window.pipEnabled = settings.pip;
-      window.skipIntroEnabled = settings.skipIntro;
-      window.skipCreditsEnabled = settings.skipCredits;
+  const checkModules = () => {
+    if (window.__cr_settings && window.__cr_skipEngine && window.__cr_feedback) {
+      try {
+        // Initialize settings
+        window.__cr_settings.loadSettings();
 
-      applySkipSettings();
+        // Global flags for popup toggles
+        window.autoSkipEnabled = true;
+        window.pipEnabled = true;
+        window.skipIntroEnabled = true;
+        window.skipCreditsEnabled = true;
+
+        // Apply initial storage values
+        chrome.storage.sync.get(
+          { enabled: true, pip: true, skipIntro: true, skipCredits: true },
+          (settings) => {
+            window.autoSkipEnabled = settings.enabled;
+            window.pipEnabled = settings.pip;
+            window.skipIntroEnabled = settings.skipIntro;
+            window.skipCreditsEnabled = settings.skipCredits;
+            applySkipSettings();
+          }
+        );
+
+        // Listen for popup messages
+        chrome.runtime.onMessage.addListener((msg) => {
+          if (msg.action === "updateSettings") {
+            chrome.storage.sync.get(
+              { enabled: true, pip: true, skipIntro: true, skipCredits: true },
+              (settings) => {
+                window.autoSkipEnabled = settings.enabled;
+                window.pipEnabled = settings.pip;
+                window.skipIntroEnabled = settings.skipIntro;
+                window.skipCreditsEnabled = settings.skipCredits;
+                applySkipSettings();
+              }
+            );
+          }
+        });
+
+        // Hotkey Alt+Shift+S
+        document.addEventListener("keydown", (event) => {
+          if (event.altKey && event.shiftKey && event.code === "KeyS") {
+            const newState = window.__cr_settings.toggleEnabled();
+            window.autoSkipEnabled = newState;
+            window.__cr_feedback.showMessage(
+              "Auto-Skip " + (newState ? "Enabled ✅" : "Disabled ❌")
+            );
+            applySkipSettings();
+          }
+        });
+
+        logDebug('Content script initialized successfully');
+
+      } catch (error) {
+        console.error('Initialization error:', error);
+        setTimeout(checkModules, 500);
+      }
+    } else {
+      // Retry if modules aren't ready
+      setTimeout(checkModules, 100);
     }
-  );
+  };
 
-  document.addEventListener("keydown", (event) => {
-    if (event.altKey && event.shiftKey && event.code === "KeyS") {
-      const newState = window.__cr_settings.toggleEnabled();
-      window.autoSkipEnabled = newState;
-
-      window.__cr_feedback.showMessage(
-        "Auto-Skip " + (newState ? "Enabled ✅" : "Disabled ❌")
-      );
-
-      applySkipSettings();
-    }
-  });
-
-  chrome.storage.onChanged.addListener((changes) => {
-    if (changes.enabled) window.autoSkipEnabled = changes.enabled.newValue;
-    if (changes.pip) window.pipEnabled = changes.pip.newValue;
-    if (changes.skipIntro) window.skipIntroEnabled = changes.skipIntro.newValue;
-    if (changes.skipCredits)
-      window.skipCreditsEnabled = changes.skipCredits.newValue;
-
-    applySkipSettings();
-  });
+  checkModules();
 }
 
 function applySkipSettings() {
   if (window.autoSkipEnabled) {
-    if (window.skipIntroEnabled) window.__cr_skipEngine.skipIntro();
-    if (window.skipCreditsEnabled) window.__cr_skipEngine.skipCredits();
+    window.__cr_skipEngine.startObserver();
+    window.__cr_skipEngine.findAndClickSkip();
     if (window.pipEnabled) enablePiP();
   } else {
-    window.__cr_skipEngine.stopAll();
+    window.__cr_skipEngine.stopObserver();
     disablePiP();
   }
 }
 
 function enablePiP() {
   console.log("PiP Enabled");
+  // Your Picture-in-Picture logic
 }
 
 function disablePiP() {
   console.log("PiP Disabled");
+  // Stop PiP logic
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeExtension);
 } else {
-  init();
+  initializeExtension();
 }

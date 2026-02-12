@@ -3,7 +3,7 @@
   "name": "Crunchyroll Auto Skip PRO",
   "version": "1.1",
   "description": "Automatically Skips Anime Intro's and Outro's on Crunchyroll. Made by Yashvir Gaming.",
-  "permissions": ["storage"],
+  "permissions": ["storage", "tabs", "scripting"],
   "host_permissions": ["*://*.crunchyroll.com/*"],
   "action": {
     "default_title": "Crunchyroll AutoSkip Pro",

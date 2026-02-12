@@ -1,8 +1,4 @@
-const DEFAULT_SETTINGS = {
-  enabled: true,
-  debug: false
-};
-
+const DEFAULT_SETTINGS = { enabled: true, debug: false };
 let currentSettings = { ...DEFAULT_SETTINGS };
 
 function loadSettings() {
@@ -21,8 +17,4 @@ function getSettings() {
   return currentSettings;
 }
 
-window.__cr_settings = {
-  loadSettings,
-  toggleEnabled,
-  getSettings
-};
+window.__cr_settings = { loadSettings, toggleEnabled, getSettings };
