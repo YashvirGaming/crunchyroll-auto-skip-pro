@@ -27,8 +27,10 @@
       "64": "icons/icon64.png",
       "96": "icons/icon96.png"
    },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnujc/D6r6JESTWtgPLmYIzMr1+fEPFQYlspzLekvyi/abfOk66LTdE8u6SxQuf1b/+dtMAfkKak75HAVMDSXCFMqugIQcBu5nfP9r9SmjMA3ssFSZRlkmu0ocJbs3tqcnhz/Zy2045SKS2pzYeaTRYRMia39mDRmzzTOP++R3Ypl1nKIYBlJg9ikywa5q8kGvTkyoH9OxGLWRskfMfEpoWhyf+7Iod66Ox8xCYlYsy0gxTmARJyoeSR6irJYqcAkF7JvoMUqMDkeHkJTm7UqrIfT3i6BaS1Ht3qlw6QLOIHHelw4K9Ek+1xoB0m1tDxNn7P2/wijs6vJDeOkEbsF5QIDAQAB",
    "manifest_version": 3,
    "name": "Crunchyroll AutoSkip PRO",
    "permissions": [ "storage" ],
-   "version": "1.1"
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.4"
 }
